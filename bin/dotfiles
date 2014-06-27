@@ -158,7 +158,8 @@ else
   e_header "Updating dotfiles"
   cd ~/.dotfiles
   git pull
-  # Submodules have been removed until I have a use for them
+  # Submodules have been removed.  I work in environments that don't have internet access.
+  # I will try to update submodules manually and commit from time to time.
   #git submodule update --init --recursive --quiet
 fi
 
@@ -199,4 +200,10 @@ if [[ "$new_dotfiles_install" && -e "conf/firsttime_reminder.sh" ]]; then
 fi
 
 # All done!
-e_header "All done!"
+e_success "All done!"
+
+e_header "Download and install ST3 http://www.sublimetext.com/3"
+e_header "Set Chrome Theme http://frai7ty.deviantart.com/art/Numix-for-Chrome-362293134"
+e_header "Disable keyboard language in the toolbar"
+e_header "Setup hot-corners"
+e_header "Setup theme in unity tweak tool"
