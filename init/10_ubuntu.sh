@@ -1,6 +1,9 @@
 # Ubuntu-only stuff. Abort if not Ubuntu.
 [[ "$(cat /etc/issue 2> /dev/null)" =~ Ubuntu ]] || return 1
 
+# Set DEBUG_MODE to 1 to disable all the lengthy shit.
+DEBUG_MODE=1
+
 # If the old files isn't removed, the duplicate APT alias will break sudo!
 # Don't need this.
 #sudoers_old="/etc/sudoers.d/sudoers-cowboy"; [[ -e "$sudoers_old" ]] && sudo rm "$sudoers_old"
@@ -42,7 +45,7 @@ add-apt-repository -y ppa:webupd8team/java
 sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list.d/spotify.list'
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59
 
-# Remove APT packages so we don't update them.  Teh bandwidth.
+# Remove APT packages first so we don't update them.  Teh bandwidth.
 remove_packages=(
   evolution-common
   totem-common
@@ -65,55 +68,49 @@ remove_packages=(
 )
 
 remove_list=()
-for package in "${remove_packages[@]}"; do
-  if [[ ! "$(dpkg -l "$package" 2>/dev/null | grep "^ii  $package")" ]]; then
-    remove_list=("${remove_list[@]}" "$package")
-  fi
-done
+e_header "Removing APT packages: ${remove_packages[*]}"
+sudo apt-get -qq remove ${remove_packages[*]}
 
-if (( ${#remove_list[@]} > 0 )); then
-  e_header "Removing APT packages: ${remove_list[*]}"
-  for package in "${remove_list[@]}"; do
-    sudo apt-get -qq remove "$package"
+if [[ "${DEBUG_MODE}" == "0" ]]
+then
+  # Update APT.
+  e_header "Updating APT"
+  sudo apt-get -qq update
+  sudo apt-get -qq dist-upgrade
+
+
+  # Install APT packages.
+  install_packages=(
+    build-essential libssl-dev oracle-java8-installer
+    git-core
+    tree sl cowsay
+    nmap telnet sipcalc
+    htop
+    virtualbox
+    indicator-multiload
+    atom
+    chromium-browser
+    spotify-client
+    unity-tweak-tool numix-bluish-theme
+  )
+
+  install_list=()
+  for package in "${install_packages[@]}"; do
+    if [[ ! "$(dpkg -l "$package" 2>/dev/null | grep "^ii  $package")" ]]; then
+      install_list=("${install_list[@]}" "$package")
+    fi
   done
-fi
 
-# Update APT.
-e_header "Updating APT"
-sudo apt-get -qq update
-sudo apt-get -qq dist-upgrade
-
-# Install APT packages.
-install_packages=(
-  build-essential libssl-dev oracle-java8-installer
-  git-core
-  tree sl cowsay
-  nmap telnet sipcalc
-  htop
-  virtualbox
-  indicator-multiload
-  atom
-  chromium-browser
-  spotify-client
-  unity-tweak-tool numix-bluish-theme
-)
-
-install_list=()
-for package in "${install_packages[@]}"; do
-  if [[ ! "$(dpkg -l "$package" 2>/dev/null | grep "^ii  $package")" ]]; then
-    install_list=("${install_list[@]}" "$package")
+  if (( ${#install_list[@]} > 0 )); then
+    e_header "Installing APT packages: ${install_list[*]}"
+    for package in "${install_list[@]}"; do
+      #sudo apt-get -qq install "$package"
+    done
   fi
-done
-
-if (( ${#install_list[@]} > 0 )); then
-  e_header "Installing APT packages: ${install_list[*]}"
-  for package in "${install_list[@]}"; do
-    sudo apt-get -qq install "$package"
-  done
 fi
 
 # Autoremove to clean up
-e_header "Autoremove APT"
+e_header "Autoremove APT cleanup"
 sudo apt-get -qq autoremove
 
 # Install Git Extras
