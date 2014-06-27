@@ -11,7 +11,7 @@ I finally decided that I wanted to be able to execute a single command to "boots
 That command is [dotfiles][dotfiles], and this is my "dotfiles" Git repo.
 
 [dotfiles]: bin/dotfiles
-[bin]: https://github.com/clevur-tom/dotfiles/tree/master/bin
+[bin]: https://github.com/tbutkiewicz/dotfiles/tree/master/bin
 
 ## What, exactly, does the "dotfiles" command do?
 
@@ -45,7 +45,7 @@ Note:
 ### Actual Installation
 
 ```sh
-bash -c "$(curl -fsSL https://raw.github.com/clevur-tom/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
+bash -c "$(curl -fsSL https://raw.github.com/tbutkiewicz/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 ```
 
 ## The "init" step
