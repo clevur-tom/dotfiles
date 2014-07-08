@@ -36,14 +36,14 @@ fi
 
 # I hate PPAs, but they make my life easier so...
 e_header "Adding APT repositories"
-add-apt-repository -y ppa:indicator-multiload/stable-daily
-add-apt-repository -y ppa:webupd8team/atom
-add-apt-repository -y ppa:noobslab/themes
-add-apt-repository -y ppa:webupd8team/java
+sudo add-apt-repository -y ppa:indicator-multiload/stable-daily
+sudo add-apt-repository -y ppa:webupd8team/atom
+sudo add-apt-repository -y ppa:noobslab/themes
+sudo add-apt-repository -y ppa:webupd8team/java
 
 # Add Spotify
-sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list.d/spotify.list'
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59
+sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list.d/spotify.list'
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59
 
 # Remove APT packages first so we don't update them.  Teh bandwidth.
 remove_packages=(
@@ -124,32 +124,32 @@ sudo apt-get -qq autoremove
 
 # Fix ubuntu
 e_header "Running fixubuntu.sh (fixubuntu.com)"
-wget -q -O - https://fixubuntu.com/fixubuntu.sh | bash
+sudo wget -q -O - https://fixubuntu.com/fixubuntu.sh | bash
 
 # Remove Amazon Icon from Launcher
 e_header "Removing Amazon Icon and search scopes"
-mv /usr/share/applications/ubuntu-amazon-default.desktop /usr/share/applications/ubuntu-amazon-default.desktop.old
+sudo mv /usr/share/applications/ubuntu-amazon-default.desktop /usr/share/applications/ubuntu-amazon-default.desktop.old
 
-gsettings set com.canonical.Unity.Lenses disabled-scopes "['more_suggestions-amazon.scope', 'more_suggestions-u1ms.scope', 'more_suggestions-populartracks.scope', 'music-musicstore.scope', 'more_suggestions-ebay.scope', 'more_suggestions-ubuntushop.scope', 'more_suggestions-skimlinks.scope']"
+sudo gsettings set com.canonical.Unity.Lenses disabled-scopes "['more_suggestions-amazon.scope', 'more_suggestions-u1ms.scope', 'more_suggestions-populartracks.scope', 'music-musicstore.scope', 'more_suggestions-ebay.scope', 'more_suggestions-ubuntushop.scope', 'more_suggestions-skimlinks.scope']"
 
 # Disable ubuntu scroll bar
 e_header "Disabling weird Ubuntu scrollbar"
-gsettings set com.canonical.desktop.interface scrollbar-mode normal
+sudo gsettings set com.canonical.desktop.interface scrollbar-mode normal
 
 # Disable guest account login
 e_header "Disabling guest account login"
-echo allow-guest=false | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
+sudo echo allow-guest=false | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
 
 # Remove white dots login screen
 e_header "Removing white dots on login...annoying"
-xhost +SI:localuser:lightdm
+sudo xhost +SI:localuser:lightdm
 su lightdm -s /bin/bash
 gsettings set com.canonical.unity-greeter draw-grid false;exit
 
 # Download and install synergy
 e_header "Downloading and installing Synergy"
 wget http://synergy-project.org/files/packages/synergy-1.5.0-r2278-Linux-x86_64.deb
-dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
+sudo dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
 
 # Disable god damn oneservice.  Can't remove the damn thing so let's stop it from running!
 sudo chmod a-x /usr/share/oneconf/oneconf-service
