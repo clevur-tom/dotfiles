@@ -144,7 +144,7 @@ sudo echo allow-guest=false | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-u
 e_header "Removing white dots on login...annoying"
 sudo xhost +SI:localuser:lightdm
 sudo su lightdm -s /bin/bash
-gsettings set com.canonical.unity-greeter draw-grid false;exit
+gsettings set com.canonical.unity-greeter draw-grid false
 
 # Download and install synergy
 e_header "Downloading and installing Synergy"
@@ -152,6 +152,7 @@ wget http://synergy-project.org/files/packages/synergy-1.5.0-r2278-Linux-x86_64.
 sudo dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
 
 # Disable god damn oneservice.  Can't remove the damn thing so let's stop it from running!
+e_header "Disabling Ubuntu's OneConf Services"
 sudo chmod a-x /usr/share/oneconf/oneconf-service
 sudo chmod a-x /usr/share/oneconf/oneconf-query
 sudo chmod a-x /usr/share/oneconf/oneconf-update
