@@ -144,7 +144,7 @@ sudo echo allow-guest=false | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-u
 e_header "Removing white dots on login...annoying"
 sudo xhost +SI:localuser:lightdm
 sudo su lightdm -s /bin/bash
-gsettings set com.canonical.unity-greeter draw-grid false
+sudo gsettings set com.canonical.unity-greeter draw-grid false
 
 # Download and install synergy
 e_header "Downloading and installing Synergy"
