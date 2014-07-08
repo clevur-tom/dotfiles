@@ -104,7 +104,7 @@ then
   if (( ${#install_list[@]} > 0 )); then
     e_header "Installing APT packages: ${install_list[*]}"
     for package in "${install_list[@]}"; do
-      #sudo apt-get -qq install "$package"
+      sudo apt-get -qq install "$package"
     done
   fi
 fi
@@ -151,3 +151,7 @@ e_header "Downloading and installing Synergy"
 wget http://synergy-project.org/files/packages/synergy-1.5.0-r2278-Linux-x86_64.deb
 dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
 
+# Disable god damn oneservice.  Can't remove the damn thing so let's stop it from running!
+sudo chmod a-x /usr/share/oneconf/oneconf-service
+sudo chmod a-x /usr/share/oneconf/oneconf-query
+sudo chmod a-x /usr/share/oneconf/oneconf-update
