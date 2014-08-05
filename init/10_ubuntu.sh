@@ -34,16 +34,39 @@ EOF
   fi
 fi
 
+
 # I hate PPAs, but they make my life easier so...
 e_header "Adding APT repositories"
-sudo add-apt-repository -y ppa:indicator-multiload/stable-daily
-sudo add-apt-repository -y ppa:webupd8team/atom
-sudo add-apt-repository -y ppa:noobslab/themes
-sudo add-apt-repository -y ppa:webupd8team/java
 
-# Add Spotify
-sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list.d/spotify.list'
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59
+ppa_list=(
+  indicator-multiload/stable-daily
+  webupd8team/atom
+  noobslab/themes
+  webupd8team/java
+)
+
+for ppa in "${ppa_list[@]}"; do
+  ppa_search=$(echo $ppa | tr '/' '-')
+  echo $ppa_search
+  echo $ppa
+  if ls -la /etc/apt/sources.list.d | grep $ppa_search > /dev/null 2>&1; then
+    echo "PPA ${ppa} already installed"
+  else
+    echo "PPA ${ppa} not found...installing"
+    sudo add-apt-repository -y ppa:$ppa
+  fi
+done
+
+
+#Spotify is a special case
+if [ -f /etc/apt/sources.list.d/spotify.list ] then
+  echo "Spotify Repo Already Installed"
+else
+  # Add Spotify
+  echo "Spotify Repo not found...installing"
+  sudo sh -c 'echo "deb http://repository.spotify.com stable non-free" >> /etc/apt/sources.list.d/spotify.list'
+  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59
+
 
 # Remove APT packages first so we don't update them.  Teh bandwidth.
 remove_packages=(
@@ -67,7 +90,6 @@ remove_packages=(
   transmission-common
 )
 
-remove_list=()
 e_header "Removing APT packages: ${remove_packages[*]}"
 sudo apt-get -qq remove ${remove_packages[*]}
 
@@ -140,16 +162,20 @@ sudo gsettings set com.canonical.desktop.interface scrollbar-mode normal
 e_header "Disabling guest account login"
 sudo echo allow-guest=false | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
 
+# Find a better way to run this without exiting and killing the script.
 # Remove white dots login screen
-e_header "Removing white dots on login...annoying"
-sudo xhost +SI:localuser:lightdm
-sudo su lightdm -s /bin/bash
-sudo gsettings set com.canonical.unity-greeter draw-grid false
+#e_header "Removing white dots on login...annoying"
+#sudo xhost +SI:localuser:lightdm
+#sudo su lightdm -s /bin/bash
+#sudo gsettings set com.canonical.unity-greeter draw-grid false; exit
 
 # Download and install synergy
-e_header "Downloading and installing Synergy"
-wget http://synergy-project.org/files/packages/synergy-1.5.0-r2278-Linux-x86_64.deb
-sudo dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
+
+if [[ $(which synergy) != '/usr/bin/synergy' ]]; then
+  e_header "Downloading and installing Synergy"
+  wget http://synergy-project.org/files/packages/synergy-1.5.0-r2278-Linux-x86_64.deb
+  sudo dpkg -i synergy-1.5.0-r2278-Linux-x86_64.deb
+fi
 
 # Disable god damn oneservice.  Can't remove the damn thing so let's stop it from running!
 e_header "Disabling Ubuntu's OneConf Services"
